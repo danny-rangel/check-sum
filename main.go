@@ -3,13 +3,21 @@ package main
 import (
 	"crypto/sha256"
 	"fmt"
+	"io"
+	"os"
 )
 
 func main() {
 
-	h := sha256.New()
+	f, err := os.Open(os.Args[1])
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
 
-	h.Write([]byte("Test message for hash"))
-	fmt.Printf("%x", h.Sum(nil))
+	h := sha256.New()
+	io.Copy(h, f)
+
+	fmt.Println("The sum is", h.Sum(nil))
 
 }
